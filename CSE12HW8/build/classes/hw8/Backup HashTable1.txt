@@ -1,0 +1,255 @@
+/*
+Name: Anthony Shih
+PID: A11295870
+Login: cs12wei
+*/
+
+package hw8;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+public class HashTable implements IHashTable {
+    
+    public String[] HashArray;
+    public static int tableSize;
+    public double loadFactor;
+    public int currentSize;
+
+    /*
+    Constructor for a new HashTable.
+    @author Anthony Shih
+    @version 1.0
+    @since 03-05-2016
+    */
+    public HashTable() {
+        tableSize = 17;
+        HashArray = new String[tableSize];
+        currentSize = 0;
+        loadFactor = 11.13;
+    }
+
+    /*
+    Insertion method. Generate the Hash of the given string and insert it into
+    the array. If there already exists a value in the bucket use double hashing
+    to find another bucket.
+    @author Anthony Shih
+    @version 1.0
+    @since 03-05-2016
+    */
+    @Override
+    public boolean insert(String value) {
+        int loc = hashFunction(value);
+        //If the first location is available, then put the value in it.
+        if (HashArray[loc] == null) { 
+            HashArray[loc] = value;
+            currentSize++;
+            System.out.println("item " + value + " successfully inserted");
+            return true;
+        }
+        //Double Hash to find next available location.
+        else {
+            while (HashArray[loc] != null ){
+                if (HashArray[loc].equals(value)) {
+                    System.out.println("item " + value + " already present");
+                    return false;
+                }
+                if(HashArray[loc].equals("")){
+                    HashArray[loc] = value;
+                    System.out.println("item " + value + " successfully inserted");
+                    currentSize++;
+                    return true;
+
+                }
+                loc = doubleHashFunction(loc);
+            }
+            HashArray[loc] = value;
+            System.out.println("item " + value + " successfully inserted");
+            currentSize++;
+            if (currentSize > loadFactor) {
+                reHash();
+            }
+            return true;
+        }
+    }
+
+    /*
+    Deletion method. Generate the Hash of the value that we want to delete, 
+    and search through the Hash the same way we would insert. If the value is
+    incorrect, keep doubleHashing until we either search through the entire 
+    hashTable or find the value and delete.
+    @author Anthony Shih
+    @version 1.0
+    @since 03-05-2016
+    */
+    @Override
+    public boolean delete(String value) {
+        int posLoc = hashFunction(value);
+        int checkCount = 0;
+        //If the key doesn't have a value in the first place.
+        if (HashArray[posLoc] == null) {
+            System.out.println("item " + value + " not found");
+            return false;
+        }
+        //Search through the entire HashTable
+        while (!HashArray[posLoc].equals(value)) {
+            checkCount++;
+            if (checkCount == tableSize || HashArray[posLoc] == null) {
+                System.out.println("item " + value + " not found");
+                return false;
+            }
+            posLoc = doubleHashFunction(posLoc);
+            if (HashArray[posLoc] == null) {
+                System.out.println("item " + value + " not found");
+                return false;
+            }
+        }
+        //Assuming the loop ends, that means we found the 
+        HashArray[posLoc] = "";
+        currentSize--;
+        System.out.println("item " + value + " successfully deleted");
+        return true;
+    }
+
+    /*
+    Lookup method. Similar to delete, we iterate through the hashTable via
+    the hash functions to find our value. 
+    @author Anthony Shih
+    @version 1.0
+    @since 03-05-2016
+    */
+    @Override
+    public boolean lookup(String value) {
+        int posLoc = hashFunction(value);
+        int checkCount = 0;
+        //If the first hash has nothing in it.
+        if (HashArray[posLoc] == null) {
+            System.out.println("item " + value + " not found");
+            return false;
+        }
+        //Iterate through the hashTable
+        while (!HashArray[posLoc].equals(value)) {
+            checkCount++;
+            if (checkCount == tableSize || HashArray[posLoc] == null) {
+                System.out.println("item " + value + " not found");
+                return false;
+            }
+            posLoc = doubleHashFunction(posLoc);
+            if (HashArray[posLoc] == null) {
+                System.out.println("item " + value + " not found");
+                return false;
+            }
+        }
+        //If the loop ends, that means we found it. Return statement.
+        System.out.println("item " + value + " found");
+        return true;
+    }
+
+    /*
+    Print method. Goes through the list top down and prints out the key
+    and the values, if they have any.
+    @author Anthony Shih
+    @version 1.0
+    @since 03-05-2016
+    */
+    @Override
+    public void print() {
+        for (int i = 0; i < tableSize; i++) {
+            if (HashArray[i] != null) {
+                System.out.println(i + ": " + HashArray[i]);
+            } else {
+                System.out.println(i + ":");
+            }
+        }
+    }
+
+    /*
+    Helper method to create the first hash.
+    @author Anthony Shih
+    @version 1.0
+    @since 03-05-2016
+    */
+    private static int hashFunction(String key) {
+        int hashVal = 0;
+        for (int j = 0; j < key.length(); j++) {
+            int letter = key.charAt(j) - 96;
+            hashVal = (hashVal * 27 + letter) % tableSize;
+        }
+        return hashVal;
+    }
+
+    /*
+    Helper method to take care of doubleHashing
+    @author Anthony Shih
+    @version 1.0
+    @since 03-05-2016
+    */
+    private static int doubleHashFunction(int key) {
+        int prime = 7;
+        return prime - (key % prime);
+    }
+
+    /*
+    Helper method to take care of reHashing.
+    Replacing the current hashArray and deleteArray
+    @author Anthony Shih
+    @version 1.0
+    @since 03-05-2016
+    */
+    private void reHash() {
+        tableSize = tableSize * 2;
+        String[] replaceHA = new String[tableSize];
+        boolean[] replaceDA = new boolean[tableSize];
+        loadFactor = loadFactor * 2;
+        for (int i = 0; i < HashArray.length; i++) {
+            if (HashArray[i] == null) {
+            } else if (HashArray[i].equals("")) {
+                replaceHA[i] = HashArray[i];
+            } else {
+                int newLoc = hashFunction(HashArray[i]);
+                while (replaceHA[newLoc] != null) {
+                    newLoc = doubleHashFunction(newLoc);
+                }
+                replaceHA[newLoc] = HashArray[i];
+            }
+        }
+        HashArray = replaceHA;
+    }
+
+    public static void main(String[] args) // This is used only for Part 1
+    {
+        File file = new File(args[0]);
+        HashTable mainHashTable = new HashTable();
+        try {
+            Scanner reader = new Scanner(file);
+            while (reader.hasNextLine()) {
+                String fullLine = reader.nextLine();
+                String command = null, input = null;
+                if (fullLine.contains(" ")) {
+                    command = fullLine.substring(0, fullLine.indexOf(" "));
+                    input = fullLine.substring(fullLine.indexOf('"') + 1, 
+                            fullLine.length() - 1);
+                } else {
+                    command = fullLine;
+                }
+                if (command.equals("insert")) {
+                    mainHashTable.insert(input);
+                } else if (command.equals("lookup")) {
+                    mainHashTable.lookup(input);
+                } else if (command.equals("delete")) {
+                    mainHashTable.delete(input);
+                } else if (command.equals("print")) {
+                    mainHashTable.print();
+                } else {
+                    System.out.println("Unrecognizable command, "
+                            + "please try again");
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Failed to open " + file);
+            System.exit(1);
+        }
+    }
+}
+
