@@ -1,0 +1,37 @@
+/*
+By Anthony Shih Secret#82
+10/15/2014
+CS49c Section 2
+Homework 5
+*/
+
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int notPalindrome(char *x)
+{
+	int i, ln, rn, c, fl;
+	fl = (strlen(x));
+	c = 0; 
+	ln = 0; 
+	rn = fl - 1; 
+	while (ln < rn)
+	{
+	 while(isalpha(x[ln]) == 0) 
+	 {
+	 	ln++;
+	 }
+	 while(isalpha(x[rn]) == 0)
+	 {
+	  	rn--;
+	 }
+	 if(toupper(x[ln]) != toupper(x[rn]))
+	 {
+		c = rn;
+	 }
+	 ln++;
+	 rn--;
+	}
+	return c;
+}

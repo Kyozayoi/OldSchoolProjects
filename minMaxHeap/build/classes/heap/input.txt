@@ -1,0 +1,6 @@
+buildMinMaxHeap : 1, 4, 2, 3, 7, 6, 10, 9, 15
+peekMin 
+peekMax 
+insert 25 
+insert 107 
+printMinMaxHeap

@@ -1,0 +1,6 @@
+//This is a comment
+(This(will)(not))pass);
+Character fail = 'c'';
+System.out.println("Java is the Best"
+/* This code is irrelevant
+All of this is also irrelevant
