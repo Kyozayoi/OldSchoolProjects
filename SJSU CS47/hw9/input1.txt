@@ -1,0 +1,36 @@
+#First example from K & R
+1 2 - 4 5 + *
+#Compute 5!
+1 2 3 4 5 ****
+#Here come binomial(14, 9) and binomial(14, 5)
+1 = 6 * 1 / = 7 * 2 / = 8 * 3 / = 9 * 4 / = 10 * 5 / = 11 * 6 / = 12 * 7 / = 13 * 8 / = 14 * 9 /
+1 = 10 * 1 / = 11 * 2 / = 12 * 3 / = 13 * 4 / = 14 * 5 /
+#Find sqrt(17) the hard way
+4 S0 R0 17 X / R0 + 2 / = S0 R0 17 X / R0 + 2 / = S0 R0 17 X / R0 + 2 / = D *
+#Now sqrt(17) the easy way
+17  = sqrt 
+#Here is a way to get Pi
+0 acos 2 * 
+#sin(pi/2) = 1 and back again
+2 3.1415926535897323 X / = sin = asin
+#cos(pi/2) = 0
+3.1415926535897323 2 / = cos
+#tan(pi/4) = 1
+3.1415926535897323 4 / = tan
+#some values for 3-4-5 triangles
+3 4 / = atan  = sin
+4 5 / acos tan
+#Here is e
+1 exp
+#and log 2
+2 log
+#Take 3 to the 5 power and 5 to the 3 power
+3 5 pow
+3 5 X pow
+#three ways to get sqrt(5)
+5 sqrt
+5 .5 pow
+5 log 2 / exp
+#test multiple storage locations
+55 S0 R0 = 34 S9 R9 = R0 R9 - = S0 R9 R0 - = S9 R0 R9 - 
+S0 R9 R0 - = S9 R0 R9 - = S0 R9 R0 - = S9 R0 R9 -
